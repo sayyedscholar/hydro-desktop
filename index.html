@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:">
+<title>Hydro</title>
+<style>
+  :root{--ink:#16232E;--paper:#F6F4EF;--teal:#1F7A6C;--tealdim:#DCEAE6;--sand:#E8DFC9;--gold:#B8862B;--line:#D8D2C4;}
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;overflow:hidden;}
+  body{background:var(--paper);color:var(--ink);font-family:'Segoe UI',system-ui,sans-serif;font-size:17px;padding:22px 28px;display:flex;gap:32px;}
+  .col{display:flex;flex-direction:column;min-width:0;}
+  .left{flex:0 0 360px;align-items:center;}
+  .right{flex:1;}
+  h1{font-size:1.9rem;margin:0;align-self:flex-start;}
+  .date{font-size:1rem;color:#6B6355;margin:2px 0 12px;align-self:flex-start;}
+  .ring{position:relative;width:230px;height:230px;flex:none;}
+  .ring svg{transform:rotate(-90deg);}
+  .ring .t{stroke:var(--sand);}
+  .ring .f{stroke:var(--teal);stroke-linecap:round;transition:stroke-dashoffset .5s,stroke .4s;}
+  .ring .f.done{stroke:var(--gold);}
+  .ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .amt{font-size:2.8rem;font-weight:600;line-height:1;}
+  .goal{font-size:1.1rem;color:#6B6355;margin-top:6px;}
+  .next{font-size:1.05rem;font-weight:600;color:var(--teal);margin-top:8px;}
+  .status{width:100%;text-align:center;margin:12px 0;padding:11px;border-radius:4px;font-size:1.1rem;font-weight:600;}
+  .status.p{background:var(--tealdim);color:var(--teal);}
+  .status.d{background:#F3E7CB;color:var(--gold);}
+  .chips{display:flex;gap:6px;width:100%;margin-bottom:10px;}
+  .chip{flex:1;padding:9px 0;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:.95rem;}
+  .chip.on{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:600;}
+  .row{display:flex;gap:10px;margin-bottom:10px;align-items:center;width:100%;}
+  button{font-family:inherit;cursor:pointer;border-radius:4px;font-size:1.05rem;}
+  .add{flex:1;padding:13px 0;background:var(--ink);color:var(--paper);border:none;font-weight:600;}
+  .ghost{background:transparent;border:1px solid var(--ink);color:var(--ink);padding:10px 16px;}
+  .link{background:none;border:none;color:#6B6355;text-decoration:underline;font-size:.95rem;margin-top:2px;}
+  input[type=number],select{padding:8px 10px;border:1px solid var(--line);background:#fff;font-family:inherit;font-size:1rem;border-radius:4px;}
+  input[type=number]{width:96px;text-align:right;}
+  input[type=checkbox]{width:22px;height:22px;}
+  .set .row{justify-content:space-between;}
+  .set label{font-size:1.02rem;}
+  .msg{font-size:.9rem;color:var(--teal);min-height:1.2em;margin:2px 0 8px;}
+  .lt{font-size:.85rem;text-transform:uppercase;letter-spacing:.7px;color:#6B6355;margin:8px 0 6px;border-top:1px solid var(--line);padding-top:12px;}
+  .bd{font-size:1rem;font-weight:600;margin-bottom:6px;}
+  .warn{color:#B3452F;font-size:.92rem;margin-bottom:6px;}
+  .le{display:flex;justify-content:space-between;font-family:Consolas,monospace;font-size:1rem;padding:5px 0;border-bottom:1px dotted var(--line);}
+  .empty{color:#9A9384;font-style:italic;font-size:1rem;}
+</style>
+</head>
+<body>
+  <div class="col left">
+    <h1>Hydro</h1>
+    <div class="date" id="date"></div>
+    <div class="ring">
+      <svg width="230" height="230" viewBox="0 0 200 200">
+        <circle class="t" cx="100" cy="100" r="86" stroke-width="13" fill="none"/>
+        <circle class="f" id="fill" cx="100" cy="100" r="86" stroke-width="13" fill="none" stroke-dasharray="540.35" stroke-dashoffset="540.35"/>
+      </svg>
+      <div class="c"><div class="amt" id="amt">0</div><div class="goal" id="goal"></div><div class="next" id="next"></div></div>
+    </div>
+    <div class="status p" id="status"></div>
+    <div class="chips">
+      <button class="chip" data-type="water">Water</button>
+      <button class="chip" data-type="tea">Tea</button>
+      <button class="chip" data-type="herbal">Herbal</button>
+      <button class="chip" data-type="coffee">Coffee</button>
+      <button class="chip" data-type="other">Other</button>
+    </div>
+    <div class="row">
+      <button class="add" data-ml="250">+250 ml</button>
+      <button class="add" data-ml="500">+500 ml</button>
+    </div>
+    <div class="row">
+      <input type="number" id="custom" min="1" max="4999" placeholder="Custom ml" style="flex:1;text-align:left;">
+      <button class="ghost" id="customBtn">Add</button>
+    </div>
+    <div class="row" style="justify-content:center;gap:26px;">
+      <button class="link" id="undo">Undo last entry</button>
+      <button class="link" id="test">Test reminder</button>
+    </div>
+  </div>
+
+  <div class="col right">
+    <div class="set">
+      <div class="row"><label for="weight">Body weight (kg)</label><input type="number" id="weight" min="30" max="300"></div>
+      <div class="row"><label for="act">Activity</label>
+        <select id="act">
+          <option value="0">Sedentary — desk all day</option>
+          <option value="350">Moderate</option>
+          <option value="700">High — heavy exercise/heat</option>
+        </select>
+      </div>
+      <button class="ghost" id="calc" style="width:100%;">Calculate goal from weight</button>
+      <div class="msg" id="calcMsg"></div>
+      <div class="row"><label for="goalIn">Daily goal (ml)</label><input type="number" id="goalIn" min="500" step="50"></div>
+      <div class="row"><label for="interval">Remind every (min)</label><input type="number" id="interval" min="1" step="1"></div>
+      <div class="row"><label>Awake window (hour)</label>
+        <span><input type="number" id="ws" min="0" max="23" style="width:68px"> – <input type="number" id="we" min="1" max="24" style="width:68px"></span>
+      </div>
+      <div class="row"><label for="auto">Start with Windows</label><input type="checkbox" id="auto"></div>
+    </div>
+    <div class="lt">Today</div>
+    <div class="bd" id="bd"></div>
+    <div class="warn" id="warn"></div>
+    <div id="logList"></div>
+  </div>
+<script src="renderer.js"></script>
+</body>
+</html>

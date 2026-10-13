@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+<title>Hydro reminder</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;overflow:hidden;}
+  body{
+    font-family:'Segoe UI',system-ui,sans-serif;font-size:17px;
+    background:#16232E;color:#F6F4EF;
+    padding:20px 22px;
+    border:1px solid #1F7A6C;
+    display:flex;flex-direction:column;justify-content:space-between;
+    user-select:none;
+  }
+  .top{display:flex;justify-content:space-between;align-items:flex-start;}
+  h1{font-size:1.45rem;font-weight:600;}
+  .sub{font-size:1.05rem;color:#B5C6CF;margin-top:4px;}
+  .x{background:none;border:none;color:#B5C6CF;font-size:1.4rem;cursor:pointer;line-height:1;padding:0 4px;}
+  .tip{border-left:3px solid #1F7A6C;background:#1D2F3C;padding:10px 12px;border-radius:3px;font-size:1rem;line-height:1.4;color:#E3ECF0;margin:10px 0;}
+  .bar{height:9px;background:#2A3B48;border-radius:5px;overflow:hidden;margin:6px 0 6px;}
+  .bar>div{height:100%;background:#1F7A6C;width:0;transition:width .3s;}
+  .bar>div.done{background:#B8862B;}
+  .warn{color:#E0A84A;font-size:.92rem;margin-top:4px;}
+  .chips{display:flex;gap:6px;margin:10px 0;}
+  .chip{flex:1;padding:8px 0;border:1px solid #4A5E6C;background:transparent;color:#C9D5DB;border-radius:4px;font-family:inherit;font-size:.92rem;cursor:pointer;}
+  .chip.on{background:#1F7A6C;border-color:#1F7A6C;color:#fff;font-weight:600;}
+  .row{display:flex;gap:10px;}
+  button.b{
+    flex:1;padding:13px 0;border:none;border-radius:4px;cursor:pointer;
+    font-family:inherit;font-size:1.05rem;font-weight:600;background:#1F7A6C;color:#fff;
+  }
+  button.b.alt{background:transparent;border:1px solid #4A5E6C;color:#D5E0E6;font-weight:400;}
+  button.b:hover,.chip:hover{filter:brightness(1.15);}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div>
+      <h1 id="title">Time to drink water</h1>
+      <div class="sub" id="sub">&nbsp;</div>
+    </div>
+    <button class="x" id="close" title="Dismiss">✕</button>
+  </div>
+
+  <div>
+    <div class="tip" id="tip"></div>
+    <div class="drink-only">
+      <div class="bar"><div id="fill"></div></div>
+      <div class="sub" id="prog"></div>
+      <div class="warn" id="warn"></div>
+    </div>
+    <div class="chips drink-only">
+      <button class="chip" data-type="water">Water</button>
+      <button class="chip" data-type="tea">Tea</button>
+      <button class="chip" data-type="herbal">Herbal</button>
+      <button class="chip" data-type="coffee">Coffee</button>
+      <button class="chip" data-type="other">Other</button>
+    </div>
+  </div>
+
+  <div class="row" id="drinkRow">
+    <button class="b" data-ml="250">+250 ml</button>
+    <button class="b" data-ml="500">+500 ml</button>
+    <button class="b alt" id="snooze">Snooze 15m</button>
+  </div>
+  <div class="row" id="wellRow" style="display:none">
+    <button class="b" id="okay">Okay</button>
+    <button class="b alt" id="snooze2">Snooze 15m</button>
+  </div>
+<script src="popup.js"></script>
+</body>
+</html>
