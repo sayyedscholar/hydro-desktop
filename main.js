@@ -35,7 +35,7 @@ const TIPS = [
 ];
 
 const DEFAULTS = {
-  settings: { weightKg: null, activityBump: 0, goalMl: 2500, intervalMin: 45, wakeStart: 8, wakeEnd: 22, autoStart: true },
+  settings: { weightKg: null, activityBump: 0, goalMl: 2500, intervalMin: 45, popupSec: 30, wakeStart: 8, wakeEnd: 22, autoStart: true },
   days: {},
   lastRemindAt: 0,
   snoozeUntil: 0,
@@ -215,7 +215,7 @@ function showPopup(mode) {
   popupWin.once('ready-to-show', () => popupWin.showInactive());
   popupWin.on('closed', () => { clearTimeout(popupTimer); popupWin = null; });
   clearTimeout(popupTimer);
-  popupTimer = setTimeout(closePopup, 10 * 1000);
+  popupTimer = setTimeout(closePopup, Math.max(3, state.settings.popupSec || 30) * 1000);
 }
 function closePopup() {
   if (popupWin && !popupWin.isDestroyed()) popupWin.close();
@@ -273,6 +273,7 @@ ipcMain.handle('save-settings', (_, patch) => {
   const num = (v, lo, hi, fb) => (Number.isFinite(v) && v >= lo && v <= hi ? v : fb);
   s.goalMl = num(patch.goalMl, 500, 10000, s.goalMl);
   s.intervalMin = num(patch.intervalMin, 1, 480, s.intervalMin);
+  s.popupSec = num(patch.popupSec, 3, 600, s.popupSec);
   s.wakeStart = num(patch.wakeStart, 0, 23, s.wakeStart);
   s.wakeEnd = num(patch.wakeEnd, 1, 24, s.wakeEnd);
   if (patch.weightKg !== undefined) s.weightKg = patch.weightKg;

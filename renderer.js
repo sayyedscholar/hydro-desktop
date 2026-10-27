@@ -60,6 +60,7 @@ function render(s) {
   setVal('act', a.activityBump);
   setVal('goalIn', a.goalMl);
   setVal('interval', a.intervalMin);
+  setVal('popupSec', a.popupSec);
   setVal('ws', a.wakeStart);
   setVal('we', a.wakeEnd);
   $('auto').checked = !!a.autoStart;
@@ -99,10 +100,11 @@ $('calc').addEventListener('click', async () => {
 const commit = () => window.hydro.saveSettings({
   goalMl: parseInt($('goalIn').value, 10),
   intervalMin: parseInt($('interval').value, 10),
+  popupSec: parseInt($('popupSec').value, 10),
   wakeStart: parseInt($('ws').value, 10),
   wakeEnd: parseInt($('we').value, 10),
 });
-['goalIn', 'interval', 'ws', 'we'].forEach(id => $(id).addEventListener('change', commit));
+['goalIn', 'interval', 'popupSec', 'ws', 'we'].forEach(id => $(id).addEventListener('change', commit));
 $('auto').addEventListener('change', () => window.hydro.saveSettings({ autoStart: $('auto').checked }));
 
 window.hydro.onState(render);

@@ -1,6 +1,6 @@
 {
   "name": "hydro-desktop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tray water reminder with weight-based goal",
   "main": "main.js",
   "scripts": {
@@ -14,7 +14,13 @@
   "build": {
     "appId": "com.amaan.hydro",
     "productName": "Hydro",
-    "files": ["main.js", "preload.js", "*.html", "*.js", "assets/**"],
+    "files": [
+      "main.js",
+      "preload.js",
+      "*.html",
+      "*.js",
+      "assets/**"
+    ],
     "win": {
       "target": "nsis",
       "icon": "assets/icon.png"
